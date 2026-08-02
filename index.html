@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Церковнославянская рукопись</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Официальные церковнославянские шрифты Unicode в Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Inter:wght@300;400;500;600;700&family=Monomakh&family=Ponomar&family=Ruslan+Display&family=Triodion&display=swap" rel="stylesheet">
+  
+  <!-- Резервные стили Ponomar Project -->
+  <link rel="stylesheet" href="https://slavonic.github.io/css/fonts.css" type="text/css">
+
+  <style>
+    @font-face {
+      font-family: 'Fedorovsk';
+      src: url('https://mirrors.ctan.org/fonts/fonts-churchslavonic/FedorovskUnicode.otf') format('opentype'),
+           url('https://cdn.jsdelivr.net/gh/typiconman/fonts-cu@master/Fedorovsk/FedorovskUnicode.otf') format('opentype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    .font-ponomar { font-family: 'Ponomar', 'Ponomar Unicode', 'PonomarUnicode', serif; }
+    .font-triodion { font-family: 'Triodion', 'Triodion Unicode', serif; }
+    .font-monomakh { font-family: 'Monomakh', 'Monomakh Unicode', serif; }
+    .font-fedorovsk { font-family: 'Fedorovsk', 'Fedorovsk Unicode', serif; }
+    .font-ruslan { font-family: 'Ruslan Display', cursive, serif; }
+    .font-title { font-family: 'Cinzel Decorative', 'Ponomar', serif; }
+
+    /* Текстура рукописного пергамента */
+    .bg-parchment {
+      background-color: #fbf5e6;
+      background-image: 
+        radial-gradient(rgba(180, 140, 90, 0.15) 1px, transparent 1px),
+        radial-gradient(rgba(120, 80, 30, 0.08) 2px, transparent 2px);
+      background-size: 24px 24px, 48px 48px;
+      background-position: 0 0, 12px 12px;
+    }
+
+    /* Оформление буквицы (Киноварь / Красная строка) */
+    .drop-cap-red::first-letter {
+      color: #b91c1c;
+      font-weight: bold;
+      font-size: 1.5em;
+      float: left;
+      line-height: 0.82;
+      margin-right: 0.18em;
+      margin-top: 0.08em;
+      text-shadow: 1px 1px 2px rgba(185, 28, 28, 0.2);
+    }
+
+    @media print {
+      body { background: white !important; color: black !important; padding: 0 !important; }
+      nav, header, footer, .no-print { display: none !important; }
+      .print-area { border: none !important; shadow: none !important; background: white !important; padding: 0 !important; }
+    }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #991b1b; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-start p-3 sm:p-6 md:p-10 font-sans selection:bg-red-900 selection:text-amber-100">
+
+  <header class="w-full max-w-5xl mb-6 text-center">
+    <div class="inline-flex items-center gap-3 bg-gradient-to-r from-red-950/80 via-slate-900 to-red-950/80 border border-red-800/50 px-5 py-2.5 rounded-2xl mb-3 shadow-xl backdrop-blur-md">
+      <span class="font-ponomar text-3xl text-red-500">҄Д</span>
+      <h1 class="text-xl sm:text-2xl font-bold font-title text-amber-200 tracking-wider">Церковнославянская рукопись</h1>
+    </div>
+    <p class="text-xs sm:text-sm text-slate-400 max-w-lg mx-auto">
+      Чтение, введение собственного текста и оформление церковнославянских рукописей с экспортом в Canvas PNG
+    </p>
+  </header>
+
+  <nav class="w-full max-w-5xl bg-slate-900/90 border border-slate-800 p-4 sm:p-5 rounded-2xl shadow-2xl mb-6 backdrop-blur-md flex flex-col gap-4">
+    
+    <!-- Выбор текста и вкладок -->
+    <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800/80">
+      
+      <div class="flex items-center gap-2 w-full sm:w-auto">
+        <i class="fa-solid fa-scroll text-amber-500 text-sm"></i>
+        <label for="textSelect" class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Выбор текста:</label>
+        <select id="textSelect" class="bg-slate-800 border border-slate-700 text-amber-100 text-xs sm:text-sm rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-red-500 outline-none flex-1 sm:w-72 cursor-pointer">
+          <option value="anaphora">Евхаристическая молитва (Досто́йно и҆ праве́дно)</option>
+          <option value="trisagion">Трисвятое (Святы́й Бо́же)</option>
+          <option value="ourfather">Молитва Господня (О́тче на́шъ)</option>
+          <option value="psalm50">Псалом 50 (Поми́луй мя́, Бо́же)</option>
+          <option value="symbol">Символ веры (Вѣ́рую во є҆ди́наго Бо́га)</option>
+          <option value="custom">✏️ Свой текст (Ввести вручную)</option>
+        </select>
+      </div>
+
+      <!-- Вкладки -->
+      <div class="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
+        <button id="tabTextBtn" class="px-3.5 py-1.5 rounded-lg font-medium transition text-amber-400 bg-slate-800 shadow-sm flex items-center gap-1.5">
+          <i class="fa-solid fa-file-lines"></i>
+          <span>Текстовый вид</span>
+        </button>
+        <button id="tabCanvasBtn" class="px-3.5 py-1.5 rounded-lg font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-1.5">
+          <i class="fa-solid fa-palette"></i>
+          <span>Canvas Холст</span>
+        </button>
+      </div>
+
+    </div>
+
+    <div id="customTextContainer" class="w-full flex flex-col gap-2 transition-all">
+      <div class="flex justify-between items-center text-xs">
+        <label for="customTextarea" class="font-medium text-amber-400 flex items-center gap-1.5">
+          <i class="fa-solid fa-pen-to-square"></i>
+          <span>Редактор церковнославянского текста (Юникод):</span>
+        </label>
+        <span class="text-slate-500 text-[11px]">Вставляйте текст с титлами и ударениями</span>
+      </div>
+      <textarea id="customTextarea" rows="4" class="w-full bg-slate-950 border border-slate-700 text-amber-100 p-3 rounded-xl font-ponomar text-base sm:text-lg focus:ring-2 focus:ring-red-500 outline-none resize-y transition-all leading-relaxed" placeholder="Вставьте ваш церковнославянский текст здесь..."></textarea>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-center pt-2">
+      
+      <!-- Шрифт -->
+      <div class="flex flex-col gap-1">
+        <label for="fontSelect" class="text-[11px] font-medium text-slate-400 uppercase">Шрифт</label>
+        <select id="fontSelect" class="bg-slate-800 border border-slate-700 text-amber-200 text-xs rounded-lg p-2 focus:ring-1 focus:ring-red-500 outline-none cursor-pointer">
+          <option value="font-ponomar" selected>Пономарь (Ponomar)</option>
+          <option value="font-triodion">Триодь (Triodion)</option>
+          <option value="font-monomakh">Мономах (Monomakh)</option>
+          <option value="font-fedorovsk">Федоровский (Fedorovsk)</option>
+          <option value="font-ruslan">Руслан Устав (Ruslan)</option>
+        </select>
+      </div>
+
+      <!-- Размер -->
+      <div class="flex flex-col gap-1">
+        <div class="flex justify-between items-center text-[11px] font-medium text-slate-400 uppercase">
+          <span>Размер шрифта</span>
+          <span id="fontSizeVal" class="text-amber-400 font-mono">32px</span>
+        </div>
+        <input type="range" id="fontSize" min="18" max="56" value="32" class="w-full accent-red-600 bg-slate-800 rounded-lg cursor-pointer h-2">
+      </div>
+
+      <!-- Интервал -->
+      <div class="flex flex-col gap-1">
+        <div class="flex justify-between items-center text-[11px] font-medium text-slate-400 uppercase">
+          <span>Межстрочный интервал</span>
+          <span id="lineHeightVal" class="text-amber-400 font-mono">1.8</span>
+        </div>
+        <input type="range" id="lineHeight" min="1.2" max="2.8" step="0.1" value="1.8" class="w-full accent-red-600 bg-slate-800 rounded-lg cursor-pointer h-2">
+      </div>
+
+      <!-- Темы и Копирование -->
+      <div class="flex items-center justify-end gap-2 pt-2 sm:pt-0">
+        <div class="flex bg-slate-800 p-1 rounded-lg border border-slate-700">
+          <button id="btnParchment" title="Пергамент" class="w-7 h-7 rounded flex items-center justify-center text-amber-900 bg-amber-200 hover:bg-amber-100 transition text-xs font-bold">P</button>
+          <button id="btnDark" title="Тёмная тема" class="w-7 h-7 rounded flex items-center justify-center text-slate-100 bg-slate-900 hover:bg-slate-950 transition text-xs font-bold">D</button>
+          <button id="btnWhite" title="Светлый лист" class="w-7 h-7 rounded flex items-center justify-center text-slate-900 bg-white hover:bg-slate-100 transition text-xs font-bold">W</button>
+        </div>
+
+        <button id="copyBtn" class="bg-red-950 hover:bg-red-900 text-red-200 border border-red-800 px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 shadow-md">
+          <i class="fa-regular fa-copy"></i>
+          <span class="hidden sm:inline">Копировать</span>
+        </button>
+      </div>
+
+    </div>
+  </nav>
+
+  <main class="w-full max-w-5xl">
+    
+    <!-- ТЕКСТОВЫЙ ВИД -->
+    <section id="textViewSection" class="w-full block transition-all">
+      <div id="paperBox" class="bg-parchment text-slate-950 p-6 sm:p-10 md:p-14 rounded-2xl border-2 border-amber-900/30 shadow-2xl transition-all duration-300 print-area relative overflow-hidden">
+        
+        <div class="absolute top-3 right-3 text-amber-900/10 pointer-events-none select-none text-6xl font-ponomar">
+          ☩
+        </div>
+
+        <div class="border-2 border-amber-900/20 p-5 sm:p-8 md:p-10 rounded-xl relative">
+          <p id="slavonicText" class="font-ponomar drop-cap-red text-justify break-words tracking-wide leading-relaxed">
+            <!-- Динамический текст -->
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CANVAS ВИД -->
+    <section id="canvasViewSection" class="w-full hidden transition-all">
+      <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-2xl flex flex-col items-center">
+        
+        <div class="w-full flex flex-wrap items-center justify-between gap-3 mb-4 text-xs text-slate-300">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-circle-info text-amber-500"></i>
+            <span>Графическая отрисовка выбранного текста на HTML5 Canvas</span>
+          </div>
+          <button id="downloadCanvasImg" class="bg-emerald-800 hover:bg-emerald-700 text-emerald-100 border border-emerald-600 px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2 shadow-lg">
+            <i class="fa-solid fa-file-image"></i>
+            <span>Скачать PNG изображение</span>
+          </button>
+        </div>
+
+        <div class="w-full overflow-x-auto flex justify-center bg-slate-950 p-4 rounded-xl border border-slate-800/80">
+          <canvas id="slavonicCanvas" class="max-w-full h-auto rounded shadow-2xl border border-amber-950"></canvas>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="mt-12 text-center text-xs text-slate-500 flex flex-col items-center gap-2">
+    <div class="flex items-center gap-2 text-slate-400">
+      <span>Церковнославянские шрифты Unicode</span>
+      <span>•</span>
+      <a href="https://www.ponomar.net/" target="_blank" rel="noopener" class="text-amber-500 hover:underline">Проект Ponomar</a>
+    </div>
+    <p>© Инструмент для верстки церковнославянских рукописей</p>
+  </footer>
+
+  <!-- Toast notification -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-emerald-950 text-emerald-100 px-4 py-3 rounded-xl shadow-2xl opacity-0 translate-y-4 transition-all duration-300 pointer-events-none text-xs flex items-center gap-3 border border-emerald-700 z-50">
+    <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+    <span id="toastMsg">Текст скопирован!</span>
+  </div>
+
+  <script>
+    const TEXT_PRESETS = {
+      anaphora: `Досто́йно и҆ праве́дно тѧ̀ пѣ́ти, тѧ̀ бл҃гослови́ти, тѧ̀ хвали́ти, тѧ̀ бл҃годари́ти, тебѣ̀ покланя́тисѧ на вся́комъ мѣ́стѣ вл҃чествїꙗ твоегѡ̀: ты́ бо е҆сѝ бг҃ъ неизрече́ненъ, недовѣ́домъ, неви́димъ, непостижи́мъ, при́снѡ сы́й, та́кожде сы́й, ты̀ и҆ є҆диноро́дный тво́й сн҃ъ, и҆ дх҃ъ тво́й ст҃ы́й. ты̀ ѿ небытїꙗ̀ въ бытїѐ на́съ приве́лъ е҆сѝ, и҆ ѿпа́дшыя возста́вилъ е҆сѝ па́ки, и҆ не ѿступи́лъ е҆сѝ вся̂ творя̀, до́ндеже на́съ на нб҃о возве́лъ е҆сѝ, и҆ цр҃тво твоѐ дарова́лъ е҆сѝ бу́дущее. ѡ҆ си́хъ всѣ́хъ благодари́мъ тѧ̀, и҆ є҆диноро́днаго твоего̀ сн҃а, и҆ дх҃а твоего̀ ст҃а́го, ѡ҆ всѣ́хъ, и̂хже вѣ́мы, и̂хже не вѣ́мы, я̂вле́нныхъ и҆ нея̂вле́нныхъ бл҃годѣя́нїихъ бы́вшихъ на на́съ. благодари́мъ тѧ̀ и҆ ѡ҆ слу́жбѣ се́й, ю́же ѿ ру́къ на́шихъ пріѧ́ти изво́лилъ е҆сѝ. а҆́ще и҆ предстоя́тъ тебѣ̀ ты́сящы арха́гг҃лѡвъ, и҆ тмы̀ а҆́гг҃лѡвъ, херувї́ми, и҆ серафї́ми шестокрила́тїи, многоочи́тїи возвыша́ющїися перна́тїи.`,
+      trisagion: `Святы́й Бо́же, Святы́й Крѣ́пкiй, Святы́й Безсме́ртный, поми́луй на́съ. (Три́жды)\nСла́ва Отцу́, и Сы́ну, и Свято́му Ду́ху, и ны́нѣ, и при́сно, и во вѣ́ки вѣкѡ́въ. Ами́нь.\nПресвята́я Тро́ице, поми́луй на́съ: Го́споди, очи́сти грѣхи́ на́ша: Влады́ко, прости́ беззако́нiя на́ша: Святы́й, посѣти́ и исцѣли́ не́мощи на́ша, и́мене Твоегѡ́ ра́ди.`,
+      ourfather: `О́тче на́шъ, И́же еси́ на небесѣ́хъ! Да святи́тся и́мя Твое́, да прiи́детъ ца́рствiе Твое́, да бу́детъ во́ля Твоя́, я́ко на небеси́ и на земли́. Хлѣ́бъ на́шъ насу́щный да́ждь на́мъ дне́сь; и оста́ви на́смъ долги́ на́ша, я́коже и мы́ оставля́емъ должникѡ́мъ на́шимъ; и не введи́ на́съ во искуше́нiе, но изба́ви на́съ отъ лука́вагѡ.`,
+      psalm50: `Поми́луй мя́, Бо́же, по вели́цѣй ми́лости Твое́й, и по мно́жеству щедро́тъ Твои́хъ очи́сти беззако́нiе мое́. Наипа́че омы́й мя́ отъ беззако́нiя моегѡ́, и отъ грѣха́ моегѡ́ очи́сти мя́: я́ко беззако́нiе мое́ а́зъ зна́ю, и грѣ́хъ мо́й предо мно́ю е́сть вы́ну. Тебѣ́ еди́ному согрѣши́хъ, и лука́вое предъ Тобо́ю сотвори́хъ, я́ко да оправди́шися во словесѣ́хъ Твои́хъ, и побѣди́ши, внегда́ суди́ти Ти́.`,
+      symbol: `Вѣ́рую во є҆ди́наго Бо́га Отца́, Вседержи́теля, Творца́ не́бу и земли́, ви́димымъ же всѣ́мъ и неви́димымъ. И во є҆ди́наго Го́спода Иису́са Христа́, Сы́на Бо́жiя, Единоро́днаго, И́же отъ Отца́ рожде́ннаго пре́жде всѣ́хъ вѣ́къ; Свѣ́та отъ Свѣ́та, Бо́га и́стинна отъ Бо́га и́стинна, рожде́нна, несотворе́нна, єдиносу́щна Отцу́, Имже вся́ бы́ша.`
+    };
+
+    const slavonicText = document.getElementById('slavonicText');
+    const fontSelect = document.getElementById('fontSelect');
+    const fontSize = document.getElementById('fontSize');
+    const fontSizeVal = document.getElementById('fontSizeVal');
+    const lineHeight = document.getElementById('lineHeight');
+    const lineHeightVal = document.getElementById('lineHeightVal');
+    const textSelect = document.getElementById('textSelect');
+    const customTextarea = document.getElementById('customTextarea');
+    const paperBox = document.getElementById('paperBox');
+    const copyBtn = document.getElementById('copyBtn');
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toastMsg');
+
+    const tabTextBtn = document.getElementById('tabTextBtn');
+    const tabCanvasBtn = document.getElementById('tabCanvasBtn');
+    const textViewSection = document.getElementById('textViewSection');
+    const canvasViewSection = document.getElementById('canvasViewSection');
+    const slavonicCanvas = document.getElementById('slavonicCanvas');
+    const downloadCanvasImg = document.getElementById('downloadCanvasImg');
+
+    let currentFontFamily = 'Ponomar';
+
+    function updateTextContent() {
+      const key = textSelect.value;
+      if (key !== 'custom') {
+        const presetText = TEXT_PRESETS[key] || TEXT_PRESETS.anaphora;
+        customTextarea.value = presetText;
+        slavonicText.innerText = presetText;
+      } else {
+        slavonicText.innerText = customTextarea.value || 'Введи́те сво́й те́кстъ...';
+      }
+      renderCanvas();
+    }
+
+    customTextarea.addEventListener('input', () => {
+      textSelect.value = 'custom';
+      slavonicText.innerText = customTextarea.value || 'Введи́те сво́й те́кстъ...';
+      renderCanvas();
+    });
+
+    textSelect.addEventListener('change', updateTextContent);
+
+    // Изменение шрифта
+    fontSelect.addEventListener('change', (e) => {
+      const fontClass = e.target.value;
+      slavonicText.className = `${fontClass} drop-cap-red text-justify break-words tracking-wide leading-relaxed`;
+      customTextarea.className = `w-full bg-slate-950 border border-slate-700 text-amber-100 p-3 rounded-xl ${fontClass} text-base sm:text-lg focus:ring-2 focus:ring-red-500 outline-none resize-y transition-all leading-relaxed`;
+      
+      if (fontClass === 'font-triodion') currentFontFamily = 'Triodion';
+      else if (fontClass === 'font-monomakh') currentFontFamily = 'Monomakh';
+      else if (fontClass === 'font-fedorovsk') currentFontFamily = 'Fedorovsk';
+      else if (fontClass === 'font-ruslan') currentFontFamily = 'Ruslan Display';
+      else currentFontFamily = 'Ponomar';
+
+      renderCanvas();
+    });
+
+    fontSize.addEventListener('input', (e) => {
+      const val = e.target.value;
+      fontSizeVal.textContent = val + 'px';
+      slavonicText.style.fontSize = val + 'px';
+      renderCanvas();
+    });
+
+    lineHeight.addEventListener('input', (e) => {
+      const val = e.target.value;
+      lineHeightVal.textContent = val;
+      slavonicText.style.lineHeight = val;
+      renderCanvas();
+    });
+
+    slavonicText.style.fontSize = fontSize.value + 'px';
+    slavonicText.style.lineHeight = lineHeight.value;
+
+    document.getElementById('btnParchment').addEventListener('click', () => {
+      paperBox.className = 'bg-parchment text-slate-950 p-6 sm:p-10 md:p-14 rounded-2xl border-2 border-amber-900/30 shadow-2xl transition-all duration-300 print-area relative overflow-hidden';
+    });
+
+    document.getElementById('btnDark').addEventListener('click', () => {
+      paperBox.className = 'bg-slate-900 text-amber-100 p-6 sm:p-10 md:p-14 rounded-2xl border-2 border-slate-800 shadow-2xl transition-all duration-300 print-area relative overflow-hidden';
+    });
+
+    document.getElementById('btnWhite').addEventListener('click', () => {
+      paperBox.className = 'bg-white text-slate-900 p-6 sm:p-10 md:p-14 rounded-2xl border-2 border-slate-200 shadow-2xl transition-all duration-300 print-area relative overflow-hidden';
+    });
+
+    tabTextBtn.addEventListener('click', () => {
+      tabTextBtn.className = 'px-3.5 py-1.5 rounded-lg font-medium transition text-amber-400 bg-slate-800 shadow-sm flex items-center gap-1.5';
+      tabCanvasBtn.className = 'px-3.5 py-1.5 rounded-lg font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-1.5';
+      textViewSection.classList.remove('hidden');
+      canvasViewSection.classList.add('hidden');
+    });
+
+    tabCanvasBtn.addEventListener('click', () => {
+      tabCanvasBtn.className = 'px-3.5 py-1.5 rounded-lg font-medium transition text-amber-400 bg-slate-800 shadow-sm flex items-center gap-1.5';
+      tabTextBtn.className = 'px-3.5 py-1.5 rounded-lg font-medium transition text-slate-400 hover:text-slate-200 flex items-center gap-1.5';
+      canvasViewSection.classList.remove('hidden');
+      textViewSection.classList.add('hidden');
+      renderCanvas();
+    });
+
+    async function renderCanvas() {
+      try {
+        await document.fonts.load(`32px "${currentFontFamily}"`);
+      } catch (e) {
+        console.warn('Загрузка шрифта...', e);
+      }
+
+      const ctx = slavonicCanvas.getContext('2d');
+      const text = slavonicText.innerText;
+      
+      const width = 1000;
+      const padding = 60;
+      const contentWidth = width - (padding * 2);
+      const fs = parseInt(fontSize.value, 10) * 1.1;
+      const lh = fs * parseFloat(lineHeight.value);
+
+      ctx.font = `${fs}px "${currentFontFamily}", "Ponomar", serif`;
+
+      const words = text.split(' ');
+      const lines = [];
+      let currentLine = '';
+
+      for (let i = 0; i < words.length; i++) {
+        const testLine = currentLine ? currentLine + ' ' + words[i] : words[i];
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > contentWidth && i > 0) {
+          lines.push(currentLine);
+          currentLine = words[i];
+        } else {
+          currentLine = testLine;
+        }
+      }
+      if (currentLine) lines.push(currentLine);
+
+      const height = Math.max(400, lines.length * lh + (padding * 2) + 40);
+      slavonicCanvas.width = width;
+      slavonicCanvas.height = height;
+
+      const grad = ctx.createLinearGradient(0, 0, width, height);
+      grad.addColorStop(0, '#fdfbf7');
+      grad.addColorStop(1, '#f5ebd7');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.strokeStyle = 'rgba(120, 50, 10, 0.25)';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(padding - 20, padding - 20, width - (padding - 20)*2, height - (padding - 20)*2);
+
+      ctx.textBaseline = 'top';
+      let y = padding + 10;
+
+      for (let l = 0; l < lines.length; l++) {
+        let lineText = lines[l];
+
+        if (l === 0 && lineText.length > 0) {
+          const firstChar = lineText.charAt(0);
+          const restOfLine = lineText.slice(1);
+
+          ctx.fillStyle = '#b91c1c';
+          ctx.font = `bold ${fs * 1.4}px "${currentFontFamily}", "Ponomar", serif`;
+          ctx.fillText(firstChar, padding, y - 6);
+
+          const firstCharWidth = ctx.measureText(firstChar).width;
+
+          ctx.fillStyle = '#1e1008';
+          ctx.font = `${fs}px "${currentFontFamily}", "Ponomar", serif`;
+          ctx.fillText(restOfLine, padding + firstCharWidth, y);
+        } else {
+          ctx.fillStyle = '#1e1008';
+          ctx.font = `${fs}px "${currentFontFamily}", "Ponomar", serif`;
+          ctx.fillText(lineText, padding, y);
+        }
+
+        y += lh;
+      }
+    }
+
+    downloadCanvasImg.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = 'church_slavonic_text.png';
+      link.href = slavonicCanvas.toDataURL('image/png');
+      link.click();
+      showToast('Изображение PNG сохранено!');
+    });
+
+    copyBtn.addEventListener('click', () => {
+      const textToCopy = slavonicText.innerText;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(textToCopy).then(() => showToast('Текст скопирован!'));
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = textToCopy;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showToast('Текст скопирован!');
+      }
+    });
+
+    function showToast(msg) {
+      toastMsg.textContent = msg;
+      toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+      }, 2800);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      updateTextContent();
+      if (document.fonts) {
+        document.fonts.ready.then(() => renderCanvas());
+      }
+    });
+  </script>
+</body>
+</html>
