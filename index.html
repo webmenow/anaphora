@@ -3,82 +3,116 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Анафора Златоуста</title>
-  
-  <!-- Tailwind CSS для адаптивного верстки -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Церковнославянский текст</title>
 
-  <!-- Подключение церковнославянских Unicode шрифтов -->
+  <!-- 1. Официальный CDN Google Fonts (Ponomar & Triodion) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Monomakh&family=Ponomar&family=Triodion&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Ponomar&family=Triodion&display=swap" rel="stylesheet">
+
+  <!-- 2. Официальные стили проекта Slavonic Computing Initiative -->
+  <link rel="stylesheet" href="https://slavonic.github.io/css/fonts.css" type="text/css">
+
   <style>
-    /* Основной шрифт - Пономарь Юникод */
-    body {
-      font-family: 'Ponomar', 'Triodion', 'Monomakh', serif;
-      background-color: #f7f2e7;
+    /* 3. Резервные прямые правила загрузки шрифтов */
+    @font-face {
+      font-family: 'Ponomar Local';
+      src: url('https://slavonic.github.io/fonts/PonomarUnicode.woff2') format('woff2'),
+           url('https://slavonic.github.io/fonts/PonomarUnicode.woff') format('woff'),
+           url('https://slavonic.github.io/fonts/PonomarUnicode.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
     }
 
-    /* Красивая текстура пергаментной бумаги */
-    .bg-parchment {
-      background-color: #fcf9f2;
-      background-image: 
-        radial-gradient(rgba(180, 140, 90, 0.12) 1px, transparent 1px),
-        radial-gradient(rgba(120, 80, 30, 0.06) 2px, transparent 2px);
-      background-size: 24px 24px, 48px 48px;
+    @font-face {
+      font-family: 'Fedorovsk Local';
+      src: url('https://slavonic.github.io/fonts/FedorovskUnicode.woff2') format('woff2'),
+           url('https://slavonic.github.io/fonts/FedorovskUnicode.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
     }
 
-    /* Стиль буквицы (Красная заглавная буква / Киноварь) */
-    .red-cap::first-letter {
-      color: #b91c1c;
-      font-weight: bold;
-      font-size: 2.2em;
+    /* Базовые настройки страницы */
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: #f2ebd9;
+      color: #1a1612;
+
+      /* Надежный стек: сначала Пономарь из Google Fonts, затем локальный, затем Федоровский и Триодион */
+      font-family: 'Ponomar', 'Ponomar Local', 'Ponomar Unicode', 'Fedorovsk Local', 'Fedorovsk', 'Triodion', serif;
+      font-size: 25px;
+      line-height: 1.85;
+
+      /* Включаем максимальную точность отрисовки лигатур и надстрочных знаков */
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Контейнер страницы (имитация рукописного пергамента) */
+    .page-container {
+      max-width: 820px;
+      margin: 40px auto;
+      background: #faf6ee;
+      padding: 50px 60px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      border-radius: 4px;
+      border: 1px solid #e3d9c6;
+      box-sizing: border-box;
+    }
+
+    p {
+      margin-top: 0;
+      margin-bottom: 1.4em;
+      text-align: justify;
+      text-justify: inter-word;
+      text-indent: 1.6em;
+    }
+
+    /* Буквица (красная заглавная буква) */
+    p.red-cap::first-letter {
+      color: #b30000;
+      font-size: 1.6em;
       float: left;
-      line-height: 0.8;
+      line-height: 0.85;
       margin-right: 0.15em;
       margin-top: 0.05em;
-      text-shadow: 1px 1px 2px rgba(185, 28, 28, 0.15);
+      font-family: 'Fedorovsk Local', 'Fedorovsk', 'Ponomar', serif;
     }
 
-    /* Настройка размера текста и межстрочного интервала */
-    .slavonic-content {
-      font-size: 1.75rem; /* ~28px */
-      line-height: 2.2;
-      color: #1a0f07;
-      text-align: justify;
-      hyphens: auto;
+    /* Выделение красным цветом (киноварь) */
+    .kinovar {
+      color: #b30000;
     }
 
-    @media (max-width: 640px) {
-      .slavonic-content {
-        font-size: 1.35rem; /* ~21px на мобильных */
-        line-height: 2.0;
+    /* Адаптированность под мобильные телефоны */
+    @media (max-width: 600px) {
+      html, body {
+        font-size: 21px;
+        line-height: 1.75;
+      }
+      .page-container {
+        margin: 0;
+        padding: 24px 18px;
+        border-radius: 0;
+        box-shadow: none;
+        border: none;
       }
     }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-3 sm:p-6 md:p-10">
+<body>
 
-  <main class="w-full max-w-4xl bg-parchment rounded-2xl border-2 border-amber-900/25 shadow-2xl p-6 sm:p-12 md:p-16 relative overflow-hidden">
+  <div class="page-container">
     
-    <!-- Декоративный славянский крест на заднем фоне -->
-    <div class="absolute top-4 right-6 text-amber-900/10 pointer-events-none select-none text-7xl font-serif">
-      ☩
-    </div>
+    <!-- ========================================================
+         НАЧАЛО ЦЕРКОВНОСЛАВЯНСКОГО ТЕКСТА
+         ======================================================== -->
 
-    <!-- Внутренняя рамка страницы -->
-    <div class="border border-amber-900/20 p-5 sm:p-8 md:p-10 rounded-xl">
-      
-      <div class="slavonic-content space-y-6">
-        
-        <!-- ========================================================
-             НАЧАЛО ЦЕРКОВНОСЛАВЯНСКОГО ТЕКСТА
-             Вставляйте ваш текст ниже между тегами <p class="red-cap"> и </p>
-             ======================================================== -->
-
-        <p class="red-cap">
-          Досто́йнѡ и҆ пра́веднѡ Тѧ̀ пѣ́ти, Тѧ̀ бл҃гослови́ти, Тѧ̀ хвали́ти, Тѧ̀ благодари́ти, Тебѣ̀ покланѧ́тисѧ на всѧ́комъ мѣ́стѣ влады́чествїѧ Твоегѡ̀. Ты̀ бо є҆си Бг҃ъ неизрече́ненъ, недовѣ́домь, неви́димь, непостижи́мь, при́снѡ сы́й, такѡ́жде сы́й, Ты̀ и҆ Є҆диноро́дный Тво́й Сы́нъ, и҆ Дх҃ъ Тво́й Ст҃ы́й.
+    <p class="red-cap">
+      Досто́йнѡ и҆ пра́веднѡ Тѧ̀ пѣ́ти, Тѧ̀ бл҃гослови́ти, Тѧ̀ хвали́ти, Тѧ̀ благодари́ти, Тебѣ̀ покланѧ́тисѧ на всѧ́комъ мѣ́стѣ влады́чествїѧ Твоегѡ̀. Ты̀ бо є҆си Бг҃ъ неизрече́ненъ, недовѣ́домь, неви́димь, непостижи́мь, при́снѡ сы́й, такѡ́жде сы́й, Ты̀ и҆ Є҆диноро́дный Тво́й Сы́нъ, и҆ Дх҃ъ Тво́й Ст҃ы́й.
 Ты̀ ѿ небытїѧ̀ въ бытїѐ на́съ приве́лъ є҆си, и҆ ѿпа́дшїѧ возста́вилъ є҆си па́ки, и҆ не ѿстꙋпи́лъ є҆си всѧ̑ творѧ̀, до́ндеже на́съ на нб҃о возве́лъ є҆си, и҆ Црⷭ҇тво Твоѐ дарова́лъ є҆си бꙋ́дꙋщее.
 Ѡ҆ си́хъ всѣ́хъ бл҃годари́мъ Тѧ̀ и҆ Є҆диноро́днаго Твоегѡ̀ Сн҃а, и҆ Дх҃а Твоегѡ̀ Ст҃а́гѡ, ѡ҆ всѣ́хъ, и҆́хже вѣ́мы, и҆ и҆́хже не вѣ́мы, ꙗ҆вле́нныхъ и҆ неѧвле́нныхъ бл҃годѣѧ́нїихъ бы́вшихъ на на́съ. Бл҃годари́мъ Тѧ̀ и҆ ѡ҆ слꙋ́жбѣ се́й, ю҆́же ѿ рꙋ́къ на́шихъ прїѧ́ти и҆зво́лилъ є҆си. А҆́ще и҆ предстоѧ́тъ Тебѣ̀ ты́сѧщи А҆рха́гг҃лѡвъ и҆ тмы̀ А҆́гг҃лѡвъ, Херꙋві́ми и҆ Серафі́ми шестокрила́тїи, многоѻчи́тїи, возвыша́щїисѧ перна́тїи.
 
@@ -144,25 +178,13 @@
 
 
 
+    </p>
 
-        </p>
+    <!-- ========================================================
+         КОНЕЦ ЦЕРКОВНОСЛАВЯНСКОГО ТЕКСТА
+         ======================================================== -->
 
-        <!-- Чтобы добавить еще один абзац текста, раскомментируйте или добавьте тег ниже: -->
-        <!-- 
-        <p class="red-cap">
-          Второй абзац текста...
-        </p> 
-        -->
-
-        <!-- ========================================================
-             КОНЕЦ ТЕКСТА
-             ======================================================== -->
-
-      </div>
-
-    </div>
-
-  </main>
+  </div>
 
 </body>
 </html>
